@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/ClearSyntax618/FiberGorm-RestAPI/config"
 	"github.com/ClearSyntax618/FiberGorm-RestAPI/handlers"
 	"github.com/gofiber/fiber/v2"
@@ -12,8 +14,11 @@ func main() {
 	config.Connect()
 
 	app.Get("/", handlers.HelloWorld)
-	app.Post("/add-dog", handlers.CreateDog)
-	app.Get("/get-dog", handlers.GetDogs)
+	app.Post("/dog", handlers.CreateDog)
+	app.Get("/dogs", handlers.GetDogs)
+	app.Get("/get/:id", handlers.GetDog)
+	app.Put("/update/:id", handlers.UpdateDog)
+	app.Delete("/delete/:id", handlers.DeleteDog)
 
-	app.Listen(":3000")
+	log.Fatal(app.Listen(":3000"))
 }

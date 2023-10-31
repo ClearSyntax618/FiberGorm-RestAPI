@@ -36,3 +36,47 @@ func GetDogs(c *fiber.Ctx) error {
 	config.DB.Find(&dogs)
 	return c.Status(200).JSON(dogs)
 }
+
+func GetDog(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var dog models.Dog
+
+	result := config.DB.Find(&dog, id)
+
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{
+			"msg": "Not found",
+		})
+	}
+
+	return c.Status(200).JSON(&dog)
+}
+
+func UpdateDog(c *fiber.Ctx) error {
+	dog := new(models.Dog)
+	id := c.Params("id")
+
+	if err := c.BodyParser(dog); err != nil {
+		return c.Status(503).JSON(fiber.Map{
+			"error": err,
+		})
+	}
+
+	config.DB.Where("id = ?", id).Updates(&dog)
+	return c.Status(200).JSON(dog)
+}
+
+func DeleteDog(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var dog models.Dog
+
+	result := config.DB.Delete(&dog, id)
+
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{
+			"msg": "Not Found",
+		})
+	}
+
+	return c.SendStatus(200)
+}
